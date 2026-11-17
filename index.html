@@ -35,7 +35,7 @@ html,body{height:100%;-webkit-tap-highlight-color:transparent;overscroll-behavio
  const canvas=document.getElementById('scene'),ctx=canvas.getContext('2d'),message=document.getElementById('message'),names=document.getElementById('names');
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const small=matchMedia('(max-width:600px)').matches||(navigator.hardwareConcurrency||8)<=4;
- const PCOUNT=small?420:720,SNOW=small?60:100,GOLD=small?150:230,BAUBLE=small?24:32;
+ const PCOUNT=small?420:720,SNOW=small?120:190,GOLD=small?150:230,BAUBLE=small?24:32;
  let w,h,dpr,start=performance.now(),last=start;
  const chars=['0','1','{','}','<','>','/','*',';','+','=','Liora','shenyi','Liora','shenyi'];
  const random=(a,b)=>a+Math.random()*(b-a);
@@ -58,7 +58,7 @@ html,body{height:100%;-webkit-tap-highlight-color:transparent;overscroll-behavio
       if(!inHeart(x,y))continue;let ok=true;for(const q of out){if((q.hx-x)*(q.hx-x)+(q.hy-y)*(q.hy-y)<gap*gap){ok=false;break;}}
       if(ok)out.push({hx:x,hy:y,ch:letters[out.length%10],sx:Math.random(),sy:Math.random(),delay:random(0,1.3),size:random(3.4,4.4)});}
     return out;})();
- const snow=Array.from({length:SNOW},()=>({x:Math.random(),y:Math.random(),s:random(.5,1.8),v:random(.012,.045),a:random(.15,.55)}));
+ const snow=Array.from({length:SNOW},()=>({x:Math.random(),y:Math.random(),s:random(.9,2.7),v:random(.02,.075),a:random(.35,.9)}));
  function resize(){w=innerWidth;h=innerHeight;dpr=Math.min(devicePixelRatio||1,small?1.6:2);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);}
  addEventListener('resize',resize);resize();
  document.getElementById('replay').addEventListener('click',()=>{start=performance.now();message.classList.remove('show');names.classList.remove('show');});
@@ -87,7 +87,7 @@ html,body{height:100%;-webkit-tap-highlight-color:transparent;overscroll-behavio
    ctx.clearRect(0,0,w,h);
    const cx=w/2,top=h*.27,th=Math.min(h*.44,w*.96),base=top+th,radius=Math.min(w*.33,th*.49);
    const bg=ctx.createRadialGradient(cx,top+th*.6,0,cx,top+th*.6,Math.max(w,h)*.62);bg.addColorStop(0,'#2a0a1e');bg.addColorStop(.55,'#1a0612');bg.addColorStop(1,'#12030c');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
-   for(const s of snow){if(!reduced){s.y=(s.y+dt*s.v)%1;s.x=(s.x+Math.sin(now*.0002+s.s)*dt*.007+1)%1;}ctx.fillStyle=`rgba(255,214,232,${s.a})`;ctx.beginPath();ctx.arc(s.x*w,s.y*h,s.s,0,Math.PI*2);ctx.fill();}
+   for(const s of snow){if(!reduced){s.y=(s.y+dt*s.v)%1;s.x=(s.x+Math.sin(now*.0002+s.s)*dt*.007+1)%1;}ctx.fillStyle=`rgba(255,246,250,${s.a})`;ctx.beginPath();ctx.arc(s.x*w,s.y*h,s.s,0,Math.PI*2);ctx.fill();}
    const progress=Math.min(1,t/6),ground=ctx.createRadialGradient(cx,base+12,0,cx,base+12,radius*1.3);ground.addColorStop(0,`rgba(255,120,180,${.18*progress})`);ground.addColorStop(1,'rgba(120,30,70,0)');ctx.save();ctx.translate(cx,base+12);ctx.scale(1,.16);ctx.fillStyle=ground;ctx.translate(-cx,-base-12);ctx.fillRect(cx-radius*1.4,base-radius*1.4,radius*2.8,radius*2.8);ctx.restore();
    const points=[];
    for(const p of particles){
