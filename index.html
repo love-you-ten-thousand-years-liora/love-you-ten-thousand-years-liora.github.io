@@ -35,7 +35,7 @@ html,body{height:100%;-webkit-tap-highlight-color:transparent;overscroll-behavio
  const canvas=document.getElementById('scene'),ctx=canvas.getContext('2d'),message=document.getElementById('message'),names=document.getElementById('names');
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const small=matchMedia('(max-width:600px)').matches||(navigator.hardwareConcurrency||8)<=4;
- const PCOUNT=small?420:720,SNOW=small?120:190,GOLD=small?150:230,BAUBLE=small?24:32;
+ const PCOUNT=small?420:720,SNOW=small?200:320,GOLD=small?150:230,BAUBLE=small?24:32;
  let w,h,dpr,start=performance.now(),last=start;
  const chars=['0','1','{','}','<','>','/','*',';','+','=','Liora','shenyi','Liora','shenyi'];
  const random=(a,b)=>a+Math.random()*(b-a);
