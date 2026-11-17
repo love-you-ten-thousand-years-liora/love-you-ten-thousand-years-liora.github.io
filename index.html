@@ -43,30 +43,42 @@ html,body{height:100%;-webkit-tap-highlight-color:transparent;overscroll-behavio
    const y=Math.pow(Math.random(),.72),angle=random(0,Math.PI*2);
    return {y,angle,r:Math.sqrt(Math.random()),sx:Math.random(),sy:Math.random(),delay:random(0,1.5),char:i%24===0?'Liora':i%24===12?'shenyi':chars[i%11],seed:random(0,9),size:random(6,9)};
  });
- const topper=(()=>{
-    const N=small?9:11,M=400,smp=[],seg=[0];
-    for(let i=0;i<M;i++){const a=i/M*Math.PI*2;smp.push([16*Math.pow(Math.sin(a),3),-(13*Math.cos(a)-5*Math.cos(2*a)-2*Math.cos(3*a)-Math.cos(4*a))-6]);}
-    for(let i=1;i<=M;i++){seg.push(seg[i-1]+Math.hypot(smp[i%M][0]-smp[i-1][0],smp[i%M][1]-smp[i-1][1]));}
+ const HPT=a=>[16*Math.pow(Math.sin(a),3),-(13*Math.cos(a)-5*Math.cos(2*a)-2*Math.cos(3*a)-Math.cos(4*a))-6];
+  const HPOLY=Array.from({length:400},(_,i)=>HPT(i/400*Math.PI*2));
+  const inHeart=(x,y)=>{let c=false;for(let i=0,j=HPOLY.length-1;i<HPOLY.length;j=i++){const xi=HPOLY[i][0],yi=HPOLY[i][1],xj=HPOLY[j][0],yj=HPOLY[j][1];if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))c=!c;}return c;};
+  const topRing=(()=>{const N=small?9:11,M=600,smp=[],seg=[0];
+    for(let i=0;i<M;i++)smp.push(HPT(i/M*Math.PI*2));
+    for(let i=1;i<=M;i++)seg.push(seg[i-1]+Math.hypot(smp[i%M][0]-smp[i-1][0],smp[i%M][1]-smp[i-1][1]));
     const total=seg[M],out=[];
-    for(let k=0;k<N;k++){const d=total*k/N;let i=1;while(seg[i]<d&&i<M)i++;
-      const p1=smp[i%M],p2=smp[(i+1)%M];out.push({hx:p1[0],hy:p1[1],ang:Math.atan2(p2[1]-p1[1],p2[0]-p1[0]),sx:Math.random(),sy:Math.random(),delay:random(0,1.2),word:k%2?`shenyi`:`Liora`,size:random(6.4,7.4)});}
-    return out;
-  })();
+    for(let k=0;k<N;k++){const d=total*k/N;let i=1;while(seg[i]<d&&i<M)i++;const p1=smp[i%M],p2=smp[(i+1)%M];
+      out.push({hx:p1[0],hy:p1[1],ang:Math.atan2(p2[1]-p1[1],p2[0]-p1[0]),sx:Math.random(),sy:Math.random(),delay:random(0,1.2),word:k%2?"shenyi":"Liora",size:random(6.4,7.4)});}
+    return out;})();
+  const topFill=(()=>{const want=small?260:380,gap=1.15,out=[],letters="Liorashenyi";let guard=0;
+    while(out.length<want&&guard<want*60){guard++;const x=(Math.random()*2-1)*16.4,y=-18+Math.random()*30;
+      if(!inHeart(x,y))continue;let ok=true;for(const q of out){if((q.hx-x)*(q.hx-x)+(q.hy-y)*(q.hy-y)<gap*gap){ok=false;break;}}
+      if(ok)out.push({hx:x,hy:y,ch:letters[out.length%10],sx:Math.random(),sy:Math.random(),delay:random(0,1.3),size:random(3.4,4.4)});}
+    return out;})();
  const snow=Array.from({length:SNOW},()=>({x:Math.random(),y:Math.random(),s:random(.5,1.8),v:random(.012,.045),a:random(.15,.55)}));
  function resize(){w=innerWidth;h=innerHeight;dpr=Math.min(devicePixelRatio||1,small?1.6:2);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);}
  addEventListener('resize',resize);resize();
  document.getElementById('replay').addEventListener('click',()=>{start=performance.now();message.classList.remove('show');names.classList.remove('show');});
  function star(cx,top,t){
-    const tr=Math.min(38,w*.086),tk=tr/16,cy=top-tr*.8;
-    for(const o of topper){
-      const q=Math.max(0,Math.min(1,(t-1-o.delay)/3.8)),ease=q*q*(3-2*q);
-      if(ease<=0)continue;
+    const tr=Math.min(34,w*.075),tk=tr/16,cy=top-tr*.88;
+    for(const o of topFill){
+      const q=Math.max(0,Math.min(1,(t-1-o.delay)/3.8)),ease=q*q*(3-2*q);if(ease<=0)continue;
       const x=cx+o.hx*tk,y=cy+o.hy*tk;
-      const px=o.sx*w+(x-o.sx*w)*ease,py=o.sy*h+(y-o.sy*h)*ease;
-      ctx.save();ctx.globalAlpha=ease;ctx.translate(px,py);ctx.rotate(Math.abs(o.ang)>Math.PI/2?o.ang+Math.PI:o.ang);
-      ctx.shadowColor='#ff9ecb';ctx.shadowBlur=10;
-      ctx.font=`500 ${o.size}px Consolas,monospace`;
-      ctx.fillStyle=o.word==='Liora'?'rgba(255,190,225,.95)':'rgba(255,222,190,.95)';
+      ctx.save();ctx.globalAlpha=ease*.72;ctx.translate(o.sx*w+(x-o.sx*w)*ease,o.sy*h+(y-o.sy*h)*ease);
+      ctx.font="500 "+o.size+"px Consolas,monospace";ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillStyle="rgba(255,205,228,.9)";ctx.fillText(o.ch,0,0);ctx.restore();
+    }
+    for(const o of topRing){
+      const q=Math.max(0,Math.min(1,(t-1-o.delay)/3.8)),ease=q*q*(3-2*q);if(ease<=0)continue;
+      const x=cx+o.hx*tk,y=cy+o.hy*tk;
+      ctx.save();ctx.globalAlpha=ease;ctx.translate(o.sx*w+(x-o.sx*w)*ease,o.sy*h+(y-o.sy*h)*ease);
+      ctx.rotate(Math.abs(o.ang)>Math.PI/2?o.ang+Math.PI:o.ang);
+      ctx.shadowColor="#ff9ecb";ctx.shadowBlur=9;ctx.font="500 "+o.size+"px Consolas,monospace";
+      ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillStyle=o.word==="Liora"?"rgba(255,196,224,.97)":"rgba(255,232,200,.97)";
       ctx.fillText(o.word,0,0);ctx.restore();
     }
   }
