@@ -110,15 +110,14 @@ html,body{height:100%;-webkit-tap-highlight-color:transparent;overscroll-behavio
    if(t>3){const fade=Math.min(1,(t-3)/2);ctx.save();ctx.globalAlpha=fade;
      for(let i=0;i<GOLD;i++){const p=i/GOLD,a=p*Math.PI*2*4.5+rotation,r=radius*p*1.01,z=Math.sin(a)*r;const x=cx+Math.cos(a)*r,y=top+p*th+z*.12;ctx.fillStyle=z>0?'#ffd9a8':'#b06a8a';ctx.shadowColor='#ff9ecb';ctx.shadowBlur=z>0?12:0;ctx.beginPath();ctx.arc(x,y,z>0?1.7:1,0,Math.PI*2);ctx.fill();}
      for(let i=0;i<BAUBLE;i++){const p=.18+(i/BAUBLE)*.8,a=i*2.4+rotation,z=Math.sin(a);if(z<-.2)continue;ctx.fillStyle=i%3===0?'#ff8fb0':'#ffe9f2';ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=14;ctx.beginPath();ctx.arc(cx+Math.cos(a)*radius*p,top+p*th+z*radius*p*.12,2.2+Math.sin(t*2+i)*.7,0,Math.PI*2);ctx.fill();}
-      const LC=['#ffd9a8','#ff9ecb','#b8f0d0','#fff3dc'],NEDGE=small?18:26;
-      ctx.strokeStyle='rgba(255,214,170,.14)';ctx.lineWidth=1;
-      for(const side of [-1,1]){ctx.beginPath();for(let i=0;i<=NEDGE;i++){const p=i/NEDGE;ctx.lineTo(cx+side*radius*p*1.02,top+p*th);}ctx.stroke();}
-      for(const side of [-1,1])for(let i=0;i<=NEDGE;i++){const p=i/NEDGE,x=cx+side*radius*p*1.02,y=top+p*th;
-        const tw=.5+.5*Math.sin(t*3.4+i*1.7+(side>0?1.1:0)),col=LC[(i+(side>0?1:0))%4];
-        ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=10*tw;ctx.beginPath();ctx.arc(x,y,1.4+tw*1.1,0,Math.PI*2);ctx.fill();}
+      const LC=['#ffd9a8','#ff9ecb','#b8f0d0','#fff3dc'],COIL=small?46:64,TURN=2.6;
+      for(let i=0;i<=COIL;i++){const p=i/COIL,a=p*Math.PI*2*TURN+rotation*.55,r=radius*p*1.03,z=Math.sin(a);
+        const x=cx+Math.cos(a)*r,y=top+p*th+z*.12,tw=.45+.55*Math.sin(t*3.3+i*1.4-rotation*.7),col=LC[i%4];
+        ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=(z>0?11:5)*tw;
+        ctx.beginPath();ctx.arc(x,y,(z>0?1.7:1.15)+tw*.8,0,Math.PI*2);ctx.fill();}
       const ORN=small?10:14;
-      for(let i=0;i<ORN;i++){const side=i%2?1:-1,p=.14+((i*.37+.13)%1)*.8,x=cx+side*radius*p*1.04,y=top+p*th;
-        const sway=Math.sin(t*1.5+i*1.3)*2.6,R=(i%3===0?4.4:3.2)+Math.sin(t*2+i)*.2;
+      for(let i=0;i<ORN;i++){const p=.16+((i*.37+.11)%1)*.78,a=(p*TURN)*Math.PI*2+rotation*.55,z=Math.sin(a);if(z<-.25)continue;
+        const r=radius*p*1.0,x=cx+Math.cos(a)*r,y=top+p*th+z*.12,sway=Math.sin(t*1.5+i*1.3)*2.6,R=(i%3===0?4.2:3.1)+Math.sin(t*2+i)*.2;
         ctx.strokeStyle='rgba(255,220,190,.3)';ctx.lineWidth=.8;ctx.beginPath();ctx.moveTo(x,y-R*2.8);ctx.lineTo(x+sway*.6,y-R);ctx.stroke();
         const bg2=ctx.createRadialGradient(x+sway*.6-R*.4,y-R*.45,0,x+sway*.6,y,R*1.15);
         bg2.addColorStop(0,'#fff7ec');bg2.addColorStop(.55,i%3===0?'#ffb3cd':'#ffe3b0');bg2.addColorStop(1,i%3===0?'#c2657f':'#c9974f');
